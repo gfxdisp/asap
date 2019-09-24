@@ -1,0 +1,8 @@
+addpath('./active_online')
+addpath('./autodiff')
+addpath('./autodiff_quick')
+addpath('./derivest')
+addpath('./examples')
+addpath('./helper_functions')
+addpath('./num_deriv')
+addpath('./posterior_inference')
