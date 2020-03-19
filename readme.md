@@ -8,13 +8,13 @@ If using the code please cite:
 
 The active sampling package includes:
 
-* two versions of the algorithm: (i) ASAP - an accurate version with full posterior update; (ii) ASAP-approx. - version with an online posterior update for reduced computation cost;
+* Two versions of the algorithm: (i) ASAP - an accurate version with full posterior update; (ii) ASAP-approx. - version with an online posterior update for reduced computation cost;
 * ASAP and ASAP-approx. both in python and matlab;
 * ASAP and ASAP-approx. with support for batch and sequential modes
 * Pytorch-GPU implementation of ASAP for large scale experiments;
-* matlab implementation of 9 commonly used sampling strategies.
+* Matlab implementation of 9 commonly used sampling strategies.
 
-** Usage
+## Usage
 
 ASAP and ASAP-approx return either a pair or a batch of pairs with the highest expected information gain. By default batch mode is used.
 
