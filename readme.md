@@ -89,25 +89,25 @@ pairs_to_compare =
 
 We also include the code for the compared in the paper methods. If using any, please also cite the original paper:
 
-Swiss-system: Csato, Laszlo. (2017). Ranking in Swiss system chess team tournaments. Annals of Operations Research. 254. 10.1007/s10479-017-2440-4. 
+Swiss-system: L. Csato, 2017. Ranking in Swiss system chess team tournaments. Annals of Operations Research. 254. 10.1007/s10479-017-2440-4. 
 
-Quicksort: L.  Maystre  and  M.  Grossglauser,  “Just  sort  it!  A  simple  and  effective approach  to  active  preference  learning,”  in Proceedings  of  the 34th International Conference on Machine Learning, vol. 70.   PMLR, 06–11Aug 2017, pp. 2344–2353.
+Quicksort: L.  Maystre  and  M.  Grossglauser, 2017.  “Just  sort  it!  A  simple  and  effective approach  to  active  preference  learning”,  in Proceedings  of  the 34th International Conference on Machine Learning, vol. 70. pp. 2344–2353.
 
-Adaptive-rectangular-design (ARD): ITU-R,  “Subjective  assessment  methods  for  3D  video  quality,”  ITU-R Recommendation P.915, Mar 2016.
+Adaptive-rectangular-design (ARD): ITU-R Recomendations, 2016.  “Subjective  assessment  methods  for  3D  video  quality”,  P.915.
 
-Matchmaking: R.  Herbrich,  T.  Minka,  and  T.  Graepel,  “Trueskill TM:  A  bayesian  skill rating system,” in Advances in Neural Information Processing Systems 19
+Matchmaking: R.  Herbrich,  T.  Minka,  and  T.  Graepel, 2019.  “Trueskill TM:  A  bayesian  skill rating system”, in Advances in Neural Information Processing Systems
 
-HRactive: Q.  Xu,  J.  Xiong,  X.  Chen,  Q.  Huang,  and  Y.  Yao,  “Hodgerank  with information  maximization  for  crowdsourced  pairwise  ranking  aggregation, ”Proceedings  of  the  Thirty-Second  AAAI  Conference  on  Artificial Intelligence, (AAAI-18), pp. 4326–4334, 2018. 
+HRactive: Q.  Xu,  J.  Xiong,  X.  Chen,  Q.  Huang,  and  Y.  Yao, 2018  “Hodgerank  with information  maximization  for  crowdsourced  pairwise  ranking  aggregation”, AAAI  Conference  on  Artificial Intelligence, pp. 4326–4334. 
 
-AKG: X.  Chen,  K.  Jiao,  and  Q.  Lin,  “Bayesian  decision  process  for  cost-efficient  dynamic  ranking  via  crowdsourcing,”Journal  of  MachineLearning Research, vol. 17, no. 216, pp. 1–40, 2016.
+AKG: X.  Chen,  K.  Jiao,  and  Q.  Lin, 2016.  “Bayesian  decision  process  for  cost-efficient  dynamic  ranking  via  crowdsourcing”, Journal  of  MachineLearning Research, vol. 17, no. 216, pp. 1–40.
 
-Crowd-BT: X. Chen, P. N. Bennett, K. Collins-Thompson, and E. Horvitz, “Pairwise ranking aggregation in a crowdsourced setting,” Proceedings of the Sixth ACM  International  Conference  on  Web  Search  and  Data  Mining,  pp.193–202, 2013
+Crowd-BT: X. Chen, P. N. Bennett, K. Collins-Thompson, and E. Horvitz, 2013. “Pairwise ranking aggregation in a crowdsourced setting”, Proceedings of the Sixth ACM  International  Conference  on  Web  Search  and  Data  Mining,  pp.193–202
 
-Hybrid-MST: J.  Li,  R.  Mantiuk,  J.  Wang,  S.  Ling,  and  P.  Le  Callet,  “Hybrid-mst: A hybrid active sampling strategy for pairwise preference aggregation,” NIPS, 31st Conference on Neural Information Processing Systems, 2018.
+Hybrid-MST: J.  Li,  R.  Mantiuk,  J.  Wang,  S.  Ling,  and  P.  Le  Callet, 2018.  “Hybrid-mst: A hybrid active sampling strategy for pairwise preference aggregation,” NIPS, 31st Conference on Neural Information Processing Systems.
 
-YeDoermann (computationally very slow, included for completeness): P. Ye and D. Doermann, “Active sampling for subjective image quality assessment,” in 2014 IEEE Conference on Computer Vision and Pattern Recognition, June 2014, pp. 4249–4256.
+YeDoermann (computationally very slow, included for completeness): P. Ye and D. Doermann, 2014. “Active sampling for subjective image quality assessment”, IEEE Conference on Computer Vision and Pattern Recognition (CVPR), pp. 4249–4256.
 
-API (Numerically unstable, included for completeness): T. Pfeiffer, X. Gao, Y. Chen, A. Mao, and D. Rand, “Adaptive polling for information aggregation,” AAAI Conference on Artificial Intelligence, 2012.
+API (Numerically unstable, included for completeness): T. Pfeiffer, X. Gao, Y. Chen, A. Mao, and D. Rand, 2012. “Adaptive polling for information aggregation”, AAAI Conference on Artificial Intelligence.
 
 
 ## License
