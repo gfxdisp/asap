@@ -4,7 +4,7 @@ ASAP: Code for active sampling in pairwise comparison experiments.
 
 If using the code please cite:
 
-[1]  A. Mikhailiuk, C. Wilmot M. Perez-Ortiz, D. Yue and R. K. Mantiuk, “Active Sampling for Pairwise Comparisons via Approximate Message Passing and Information Gain Maximization”, arXiv, 2020. Accessible at 
+A. Mikhailiuk, C. Wilmot M. Perez-Ortiz, D. Yue and R. K. Mantiuk, “Active Sampling for Pairwise Comparisons via Approximate Message Passing and Information Gain Maximization”, arXiv, 2020. Accessible at 
 
 The active sampling package includes:
 
