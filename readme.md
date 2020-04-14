@@ -26,7 +26,7 @@ The active sampling package includes:
 * Pytorch-GPU implementation of ASAP for large scale experiments;
 * Matlab implementation of 9 commonly used sampling strategies.
 
-## Usage
+### Usage
 
 ASAP and ASAP-approx return either a pair or a batch of pairs with the highest expected information gain. By default batch mode is used.
 
