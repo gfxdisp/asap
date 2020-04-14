@@ -1,6 +1,6 @@
-# asap
+# ASAP
 
-ASAP: Code for active sampling in pairwise comparison experiments.
+## Active sampling for pairwise comparisons
 
 If using the code please cite:
 
