@@ -1,6 +1,5 @@
-# ASAP
+# ASAP: Active sampling for pairwise comparisons
 
-## Active sampling for pairwise comparisons
 
 If using the code please cite:
 
