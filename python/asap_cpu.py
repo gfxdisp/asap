@@ -1,5 +1,4 @@
 import numpy as np
-import matplotlib.pyplot as plt
 import scipy
 import random
 import networkx as nx
@@ -9,9 +8,16 @@ import copy
 class ASAP():
 
     def __init__(self,N):
+        # Initialize trueskill solver with the number of conditions
         self.ts_solver = TrueSkillSolver(N)
 
     def unroll_mat(self,M):
+        '''
+        Function to convert matrix M with M[ii][jj] = (number of time ii was chosen over jj)
+        to a matrix G with number of rows equal to the total number of comparisons performed.
+        Each row of this matrix contains three elements, [ii, jj, 1/0], i.e. conditions participating
+        in a single comparison and the outcome of this comparison.
+        '''
         N = np.shape(M)[0]
         G = np.empty((0,2))
         for ii in range(0,N):
@@ -22,6 +28,13 @@ class ASAP():
         return G
 
     def compute_minimum_spanning_tree(self,inf_mat):
+        '''
+        Given an information gain matrix, we want to extract a set of comparisons to perform that
+        would have the largest total information gain and would form a connected graph of comparisons.
+        The function takes as input an information gain matrix, then computes its reciprocal (1/inf_gain)
+        and extracts a minimum spanning tree from it.
+        '''
+        
         inf_mat = inf_mat+inf_mat.T
         inf_mat[inf_mat<=0] = np.inf
         inf_mat = 1/inf_mat
@@ -33,14 +46,30 @@ class ASAP():
         return pairs_to_compare
 
     def run_asap(self, M, mst_mode=True):
+        '''
+        The main function to generate pairs for comparisons from the pairwise comparison matrix M
+        ''' 
+        
         N = np.shape(M)[0]
+        
         G = self.unroll_mat(M)
+        
+        # Returns an information gain matrix and the next pair of comparisons with the largest information gain
         inf_mat, pairs_to_compare = self.compute_information_gain_mat(N,G)
+        
+        # If we are interested in the set of (N-1) pairs to compare instead of a single comparison, we extract
+        # this set with a minimum spanning tree of the inverse of the information gain matrix
         if mst_mode:
             pairs_to_compare = self.compute_minimum_spanning_tree(inf_mat)
         return pairs_to_compare
 
     def compute_prob_cmps(self):
+        '''
+        prob: matrix with probability of one condition chosen over another with prob[ii][jj] computed from 
+        CDF(mu_ii-mu_jj, 1+var_ii+var_jj). Used to weight the computation of the expected information gain
+        prob_cmp: matrix with probability of performing an evaluation of expected information gain for each 
+        pair of conditions
+        '''
         means, vrs = self.ts_solver.Ms, self.ts_solver.Vs
         N = np.shape(means)[0]
 
@@ -58,19 +87,37 @@ class ASAP():
         return prob, prob_cmp
 
     def get_maximum(self,gain_mat):
-
+        '''
+        Function to find the pair of conditions, which, compared would attain a maximum in the information gain matrix. 
+        '''
         result = np.where(gain_mat == np.amax(gain_mat))
         result = np.stack((result[0],result[1]), axis=1)
         pair_to_compare = np.expand_dims(result[random.randint(0,np.shape(result)[0]-1),:],0)
         return pair_to_compare
 
     def compute_information_gain_mat(self,N,G):
+        '''
+        Given the number of conditions (N) and comparisons performed (G) the function returns the information
+        gain matrix and the pair of conditions maximizing the information gain
+        '''
+        
         kl_divs = np.zeros((N,N))
+        
+        # Estimate the mean and the standard deviation of the scores obtained from the comparisons collected so far
         Ms_curr, Vs_curr = self.ts_solver.solve(G)
+        
+        # Save the computed matrices during the intermediate steps of the ts_solver to speed up computations in the 
+        # next steps
         self.ts_solver.add_cmps()
+        
+        # Compute prob to weight entries in the expected information gain matrix and prob_cmps for the selective 
+        # expected information gain evaluations
         prob, prob_cmps = self.compute_prob_cmps()
+        
+        # Iterate over all possible pairs of conditions
         for ii in range(1,N):
             for jj in range(0,ii):
+                # only calculate the the expected information gain for the pairs that are close in the scale (selective evaluations)
                 if prob_cmps[ii][jj]>=random.random():
 
                     Ms, Vs = self.ts_solver.solve(np.vstack((G,np.array([ii,jj]))), num_iters=2, save = False)
@@ -79,6 +126,7 @@ class ASAP():
                     Ms, Vs  = self.ts_solver.solve(np.vstack((G,np.array([jj,ii]))), num_iters=2, save = False)
                     kl2 = self.kl_divergence_approx(Ms,Vs,Ms_curr,Vs_curr)
                     
+                    # Compute expected information gain by weighting the kl divergence by the probability of one condition selected over another
                     kl_gain = prob[ii][jj]*kl1+(1-prob[ii][jj])*kl2
                     kl_divs[ii][jj] = kl_gain
                 else:
@@ -96,6 +144,10 @@ class ASAP():
 
 
 class TrueSkillSolver():
+    '''
+    Implementation of the TrueSkill from http://mlg.eng.cam.ac.uk/teaching/4f13/1920/message%20in%20TrueSkill.pdf
+    '''
+    
     def __init__(self,N):
         self.N = N
         self.Ms = np.zeros(shape=(N))
@@ -121,7 +173,7 @@ class TrueSkillSolver():
         ps = self.psi(x)
         return ps*(ps + x)
 
-    def solve(self, G, num_iters = 4, save = True):
+    def solve(self, G, num_iters = 6, save = True):
 
         if np.shape(self.Mgs)[0]!=np.shape(G)[0]:
             self.add_cmps(np.shape(G)[0]-np.shape(self.Mgs)[0])
