@@ -21,7 +21,7 @@ function [pairs_to_compare] = run_asap(M,mode)
     init_data.prob_cmps = ones(N);
     
     % Compute the information gain matrix and return a single pair maximizing information gain
-    [inf_mat,pairs_to_compare]=compute_information_gain_mat(N,init_data);
+    [inf_mat,init_data,pairs_to_compare]=compute_information_gain_mat(N,init_data);
     if strcmp(mode,'mst')
         pairs_to_compare = compute_minimum_spanning_tree(inf_mat);
     end
