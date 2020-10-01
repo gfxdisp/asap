@@ -18,7 +18,7 @@ function [kl_divs,out_data,arg] = compute_information_gain_mat(Nc,init_data)
 
     
     maxval = -Inf;
-    out_data.prob_cmps = init_data.prob_cmps;
+    out_data.prob_cmps = zeros(Nc);
     
     % Iterate over all possible pairs
     for ii=2:Nc
@@ -28,7 +28,7 @@ function [kl_divs,out_data,arg] = compute_information_gain_mat(Nc,init_data)
             pij=normcdf(out_data.Ms(ii)-out_data.Ms(jj), 0, sqrt(1+out_data.Vs(ii)+out_data.Vs(jj)) );
 	    
 	    % Selective EIG evaluation
-            if out_data.prob_cmps(ii,jj)>rand()
+            if init_data.prob_cmps(ii,jj)>rand()
 	    
 	        % Solve for the case that ii was selected over jj
                 out_data.G = [G; ii,jj];
