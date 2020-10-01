@@ -18,7 +18,7 @@ function [kl_divs,out_data,arg] = compute_information_gain_mat(Nc,init_data)
 
     
     maxval = -Inf;
-    out_data.prob_cmps = zeros(Nc);
+    out_data.prob_cmps = init_data.prob_cmps;
     
     % Iterate over all possible pairs
     for ii=2:Nc
