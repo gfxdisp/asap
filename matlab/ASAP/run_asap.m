@@ -1,4 +1,4 @@
-function [pairs_to_compare] = run_asap(M,mode)
+function [pairs_to_compare, Mean, Std] = run_asap(M,mode)
 
     assert(size(M,1)==size(M,2),'Matrix M must be square.')
     assert(size(M,1)>2,'More than two conditions are required for active sampling.')
@@ -25,5 +25,8 @@ function [pairs_to_compare] = run_asap(M,mode)
     if strcmp(mode,'mst')
         pairs_to_compare = compute_minimum_spanning_tree(inf_mat);
     end
-
+    
+    Mean = init_data.Ms;
+    Std = init_data.Vs;
+    
 end

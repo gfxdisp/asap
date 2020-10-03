@@ -7,7 +7,7 @@ C_init = zeros (number_of_conditions, number_of_conditions);
 ii = 0;
 while ii<number_of_comparisons
 
-    [pairs_to_compare] = run_asap(C_init, 'mst');
+    [pairs_to_compare, Mean, Std] = run_asap(C_init, 'mst');
     
     for jj = 1:size(pairs_to_compare,1)
         

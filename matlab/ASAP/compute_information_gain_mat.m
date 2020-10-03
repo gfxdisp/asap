@@ -46,7 +46,7 @@ function [kl_divs,out_data,arg] = compute_information_gain_mat(Nc,init_data)
                 kl_gain=pij*kl1+(1-pij)*kl2;
                 kl_divs(ii,jj)=kl_gain;
 		
-		% Save the pairs for the maximum attainable information gain
+		        % Save the pairs for the maximum attainable information gain
                 if kl_gain>maxval
                     maxval=kl_gain;
                     arg = [ii,jj];
