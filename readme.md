@@ -4,17 +4,15 @@ Pairwise comparison data arise in many domains with subjective assessment experi
 
 If using the code please cite:
 
-A. Mikhailiuk, C. Wilmot, M. Perez-Ortiz, D. Yue and R. K. Mantiuk, 2020. “Active Sampling for Pairwise Comparisons via Approximate Message Passing and Information Gain Maximization”, arXiv:2004.05691. Accessible at https://arxiv.org/abs/2004.05691
-
+A. Mikhailiuk, C. Wilmot, M. Perez-Ortiz, D. Yue and R. K. Mantiuk, 2020. “Active Sampling for Pairwise Comparisons via Approximate Message Passing and Information Gain Maximization”, International Conference on Pattern Recognition (ICPR)
 
 ```
-@misc{mikhailiuk2020active,
+@INPROCEEDINGS{mikhailiuk2020active,
     title={Active Sampling for Pairwise Comparisons via Approximate Message Passing and Information Gain Maximization},
     author={Aliaksei Mikhailiuk and Clifford Wilmot and Maria Perez-Ortiz and Dingcheng Yue and Rafal Mantiuk},
-    year={2020},
-    eprint={2004.05691},
-    archivePrefix={arXiv},
-    primaryClass={cs.LG}
+    booktitle={2021 IEEE International Conference on Pattern Recognition (ICPR)}, 
+    year={2021},
+    month={Jan},
 }
 ```
 
