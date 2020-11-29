@@ -10,7 +10,7 @@ A. Mikhailiuk, C. Wilmot, M. Perez-Ortiz, D. Yue and R. K. Mantiuk, 2020. “Act
 @INPROCEEDINGS{mikhailiuk2020active,
     title={Active Sampling for Pairwise Comparisons via Approximate Message Passing and Information Gain Maximization},
     author={Aliaksei Mikhailiuk and Clifford Wilmot and Maria Perez-Ortiz and Dingcheng Yue and Rafal Mantiuk},
-    booktitle={2021 IEEE International Conference on Pattern Recognition (ICPR)}, 
+    booktitle={2020 IEEE International Conference on Pattern Recognition (ICPR)}, 
     year={2021},
     month={Jan},
 }
