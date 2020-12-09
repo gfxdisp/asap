@@ -16,6 +16,8 @@ A. Mikhailiuk, C. Wilmot, M. Perez-Ortiz, D. Yue and R. K. Mantiuk, 2020. “Act
 }
 ```
 
+[![IMAGE ALT TEXT](http://img.youtube.com/vi/Yt3-3zOR9u4/0.jpg)](http://www.youtube.com/watch?v=Yt3-3zOR9u4 "Video Title")
+
 The active sampling package includes:
 
 * Two versions of the algorithm: (i) ASAP - an accurate version with full posterior update; (ii) ASAP-approx. - version with an online posterior update for reduced computation cost;
