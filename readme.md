@@ -16,7 +16,6 @@ A. Mikhailiuk, C. Wilmot, M. Perez-Ortiz, D. Yue and R. K. Mantiuk, 2020. “Act
 }
 ```
 
-[![IMAGE ALT TEXT](http://img.youtube.com/vi/Yt3-3zOR9u4/0.jpg)](http://www.youtube.com/watch?v=Yt3-3zOR9u4 "Video Title")
 
 The active sampling package includes:
 
@@ -25,6 +24,13 @@ The active sampling package includes:
 * ASAP and ASAP-approx. with support for batch and sequential modes
 * Pytorch-GPU implementation of ASAP for large scale experiments;
 * Matlab implementation of 9 commonly used sampling strategies.
+
+### Video explanation
+
+Click on the image below to be re-directed to youtube.
+
+[![IMAGE ALT TEXT](http://img.youtube.com/vi/Yt3-3zOR9u4/0.jpg)](http://www.youtube.com/watch?v=Yt3-3zOR9u4 "Video Title")
+
 
 ### Usage
 
