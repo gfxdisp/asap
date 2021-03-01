@@ -3,6 +3,7 @@ import torch.distributions as dist
 import numpy as np
 import scipy.sparse as ssp
 import networkx as nx
+import random
 torch.set_printoptions(precision=3,sci_mode=False)
 np.set_printoptions(precision=6, suppress=True)
 
@@ -110,8 +111,16 @@ def kl_divergence_approx(mean_1, var_1, mean_2, var_2):
 
     return total
 
+def get_maximum(gain_mat):
+    '''
+    Function to find the pair of conditions, which, compared would attain a maximum in the information gain matrix. 
+    '''
+    result = np.where(gain_mat == np.amax(gain_mat))
+    result = np.stack((result[0],result[1]), axis=1)
+    pair_to_compare = np.expand_dims(result[random.randint(0,np.shape(result)[0]-1),:],0)
+    return pair_to_compare
 
-def ASAP(cmp_matrix: np.ndarray, cuda=False):
+def ASAP(cmp_matrix: np.ndarray, mst_mode=True, cuda=False):
     '''
 
     Function to compute the next batch of comparisons to perform. 
@@ -162,10 +171,10 @@ def ASAP(cmp_matrix: np.ndarray, cuda=False):
                                                      normal.mean[cc], normal.variance[cc])
 
     info_gain = kl_divs + kl_divs.T
-
-
-
-    # minial spanning tree for batch mode
-    pairs_to_compare = compute_minimum_spanning_tree(info_gain.cpu().detach().numpy())
+    info_gain = info_gain.cpu().detach().numpy()
+    pairs_to_compare = get_maximum(info_gain)
+    if mst_mode:    
+        # minial spanning tree for batch mode
+        pairs_to_compare = compute_minimum_spanning_tree(info_gain)
     
     return pairs_to_compare
