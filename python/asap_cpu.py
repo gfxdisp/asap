@@ -7,9 +7,11 @@ import copy
 
 class ASAP():
 
-    def __init__(self,N):
+    def __init__(self,N, selective_eig = False):
         # Initialize trueskill solver with the number of conditions
         self.ts_solver = TrueSkillSolver(N)
+        self.selective_eig = selective_eig
+
 
     def unroll_mat(self,M):
         '''
@@ -38,8 +40,10 @@ class ASAP():
         inf_mat = inf_mat+inf_mat.T
         inf_mat[inf_mat<=0] = np.inf
         inf_mat = 1/inf_mat
+
         GrMST=nx.from_numpy_matrix(inf_mat)
         T=nx.minimum_spanning_tree(GrMST)
+
         pairs_to_compare = np.asarray(T.edges())
         edges=sorted(T.edges(data=True), key=lambda t: t[2].get('weight', 1))
         pairs_to_compare = np.array([t[0:2] for t in edges ])
@@ -52,7 +56,7 @@ class ASAP():
         
         N = np.shape(M)[0]
         
-        G = self.unroll_mat(M)
+        G = self.unroll_mat(M.copy())
         
         # Returns an information gain matrix and the next pair of comparisons with the largest information gain
         inf_mat, pairs_to_compare = self.compute_information_gain_mat(N,G)
@@ -82,8 +86,11 @@ class ASAP():
         prob = np.minimum(prob, 1-prob)
         prob = np.tril(prob)
         prob_cmp = prob.copy()
-        prob_cmp = np.divide(prob_cmp.T,np.amax(prob_cmp, 1), out=np.zeros_like(prob_cmp.T), where=np.amax(prob_cmp, 1)!=0).T
+        prob_cmp = np.ones(np.shape(prob_cmp))
+        if self.selective_eig:
+            prob_cmp = np.divide(prob_cmp.T,np.amax(prob_cmp, 1), out=np.zeros_like(prob_cmp.T), where=np.amax(prob_cmp, 1)!=0).T
 
+            
         return prob, prob_cmp
 
     def get_maximum(self,gain_mat):
@@ -120,12 +127,12 @@ class ASAP():
                 # only calculate the the expected information gain for the pairs that are close in the scale (selective evaluations)
                 if prob_cmps[ii][jj]>=random.random():
 
-                    Ms, Vs = self.ts_solver.solve(np.vstack((G,np.array([ii,jj]))), num_iters=2, save = False)
+                    Ms, Vs = self.ts_solver.solve(np.vstack((G,np.array([ii,jj]))), num_iters=4, save = False)
                     kl1 = self.kl_divergence_approx(Ms,Vs,Ms_curr,Vs_curr)
-                    
-                    Ms, Vs  = self.ts_solver.solve(np.vstack((G,np.array([jj,ii]))), num_iters=2, save = False)
+
+                    Ms, Vs  = self.ts_solver.solve(np.vstack((G,np.array([jj,ii]))), num_iters=4, save = False)
                     kl2 = self.kl_divergence_approx(Ms,Vs,Ms_curr,Vs_curr)
-                    
+
                     # Compute expected information gain by weighting the kl divergence by the probability of one condition selected over another
                     kl_gain = prob[ii][jj]*kl1+(1-prob[ii][jj])*kl2
                     kl_divs[ii][jj] = kl_gain
@@ -137,7 +144,10 @@ class ASAP():
         return kl_divs, pair_to_compare
 
     def kl_divergence_approx(self,mean_1, var_1, mean_2, var_2):
-
+        '''
+        Aproximation of the multivariate normal KL divergence: 
+        https://stats.stackexchange.com/questions/60680/kl-divergence-between-two-multivariate-gaussians
+        '''
         total = np.sum(np.log(var_2)) - np.sum(np.log(var_1))+sum(var_1/var_2)+np.dot(1/var_2, (mean_1-mean_2)**2)
 
         return total
@@ -145,7 +155,8 @@ class ASAP():
 
 class TrueSkillSolver():
     '''
-    Implementation of the TrueSkill from http://mlg.eng.cam.ac.uk/teaching/4f13/1920/message%20in%20TrueSkill.pdf
+    Implementation of the TrueSkill:
+    http://mlg.eng.cam.ac.uk/teaching/4f13/1920/message%20in%20TrueSkill.pdf
     '''
     
     def __init__(self,N):
