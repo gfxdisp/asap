@@ -105,7 +105,7 @@ pairs_to_compare =
 
 ## Literature
 
-We also include the code for the compared in the paper methods. If using any, please also cite the original paper:
+We also include the code for the compared in the paper methods.
 
 Swiss-system: L. Csato, 2017. Ranking in Swiss system chess team tournaments. Annals of Operations Research. 254. 10.1007/s10479-017-2440-4. 
 
@@ -115,17 +115,20 @@ Adaptive-rectangular-design (ARD): ITU-R Recomendations, 2016.  “Subjective  a
 
 Matchmaking: R.  Herbrich,  T.  Minka,  and  T.  Graepel, 2019.  “Trueskill TM:  A  bayesian  skill rating system”, in Advances in Neural Information Processing Systems
 
-HRactive: Q.  Xu,  J.  Xiong,  X.  Chen,  Q.  Huang,  and  Y.  Yao, 2018  “Hodgerank  with information  maximization  for  crowdsourced  pairwise  ranking  aggregation”, AAAI  Conference  on  Artificial Intelligence, pp. 4326–4334. 
+YeDoermann (computationally very slow, included for completeness): P. Ye and D. Doermann, 2014. “Active sampling for subjective image quality assessment”, IEEE Conference on Computer Vision and Pattern Recognition (CVPR), pp. 4249–4256.
+
+API (Numerically unstable, included for completeness): T. Pfeiffer, X. Gao, Y. Chen, A. Mao, and D. Rand, 2012. “Adaptive polling for information aggregation”, AAAI Conference on Artificial Intelligence.
+
+In the paper we used official implemenation from:
+
+HR-Active: Q.  Xu,  J.  Xiong,  X.  Chen,  Q.  Huang,  and  Y.  Yao, 2018  “Hodgerank  with information  maximization  for  crowdsourced  pairwise  ranking  aggregation”, AAAI  Conference  on  Artificial Intelligence, pp. 4326–4334. 
 
 AKG: X.  Chen,  K.  Jiao,  and  Q.  Lin, 2016.  “Bayesian  decision  process  for  cost-efficient  dynamic  ranking  via  crowdsourcing”, Journal  of  MachineLearning Research, vol. 17, no. 216, pp. 1–40.
 
 Crowd-BT: X. Chen, P. N. Bennett, K. Collins-Thompson, and E. Horvitz, 2013. “Pairwise ranking aggregation in a crowdsourced setting”, Proceedings of the Sixth ACM  International  Conference  on  Web  Search  and  Data  Mining,  pp.193–202
 
-Hybrid-MST: J.  Li,  R.  Mantiuk,  J.  Wang,  S.  Ling,  and  P.  Le  Callet, 2018.  “Hybrid-mst: A hybrid active sampling strategy for pairwise preference aggregation,” NIPS, 31st Conference on Neural Information Processing Systems.
+Hybrid-MST: J.  Li,  R.  Mantiuk,  J.  Wang,  S.  Ling,  and  P.  Le  Callet, 2018.  “Hybrid-mst: A hybrid active sampling strategy for pairwise preference aggregation,” NIPS, 31st Conference on Neural Information Processing Systems. [LINK](https://github.com/jingnantes/hybrid-mst)
 
-YeDoermann (computationally very slow, included for completeness): P. Ye and D. Doermann, 2014. “Active sampling for subjective image quality assessment”, IEEE Conference on Computer Vision and Pattern Recognition (CVPR), pp. 4249–4256.
-
-API (Numerically unstable, included for completeness): T. Pfeiffer, X. Gao, Y. Chen, A. Mao, and D. Rand, 2012. “Adaptive polling for information aggregation”, AAAI Conference on Artificial Intelligence.
 
 
 ## License
