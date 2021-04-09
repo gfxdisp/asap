@@ -105,11 +105,12 @@ def compute_minimum_spanning_tree(inf_mat):
     return pairs_to_compare
 
 
-def kl_divergence_approx(mean_1, var_1, mean_2, var_2):
-
-    total = torch.sum(torch.log(var_2)) - torch.sum(torch.log(var_1))+sum(var_1/var_2)+torch.dot(1/var_2, (mean_1-mean_2)**2)
-
+def kl_divergence_approx(mean_1, std_1, mean_2, std_2):
+    normal0 = dist.Normal(mean_1, std_1)
+    normal = dist.Normal(mean_2, std_2)
+    total = (1 + 2*dist.kl.kl_divergence(normal0, normal)).sum()
     return total
+
 
 def get_maximum(gain_mat):
     '''
