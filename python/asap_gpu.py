@@ -168,8 +168,8 @@ def ASAP(cmp_matrix: np.ndarray, mst_mode=True, cuda=False):
     # Compute expected information gain for all posible outcomes
     kl_divs = prob_cmps(normal0)
     for cc in range(0,len(I)):
-        kl_divs[I[cc],J[cc]] *= kl_divergence_approx(normal0.mean, normal0.variance,
-                                                     normal.mean[cc], normal.variance[cc])
+        kl_divs[I[cc],J[cc]] *= kl_divergence_approx(normal0.loc, normal0.scale,
+                                                     normal.loc[cc], normal.scale[cc])
 
     info_gain = kl_divs + kl_divs.T
     info_gain = info_gain.cpu().detach().numpy()
