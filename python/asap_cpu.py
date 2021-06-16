@@ -7,9 +7,10 @@ import copy
 
 class ASAP():
 
-    def __init__(self,N, selective_eig = False):
+    def __init__(self,N, selective_eig = False, approx = False):
+        self.approx = approx
         # Initialize trueskill solver with the number of conditions
-        self.ts_solver = TrueSkillSolver(N)
+        self.ts_solver = TrueSkillSolver(N, approx)
         self.selective_eig = selective_eig
 
 
@@ -58,6 +59,7 @@ class ASAP():
         
         G = self.unroll_mat(M.copy())
         
+
         # Returns an information gain matrix and the next pair of comparisons with the largest information gain
         inf_mat, pairs_to_compare = self.compute_information_gain_mat(N,G)
         
@@ -67,6 +69,8 @@ class ASAP():
             pairs_to_compare = self.compute_minimum_spanning_tree(inf_mat)
         return pairs_to_compare
 
+    
+    
     def compute_prob_cmps(self):
         '''
         prob: matrix with probability of one condition chosen over another with prob[ii][jj] computed from 
@@ -120,19 +124,27 @@ class ASAP():
         # Compute prob to weight entries in the expected information gain matrix and prob_cmps for the selective 
         # expected information gain evaluations
         prob, prob_cmps = self.compute_prob_cmps()
-        
         # Iterate over all possible pairs of conditions
         for ii in range(1,N):
             for jj in range(0,ii):
                 # only calculate the the expected information gain for the pairs that are close in the scale (selective evaluations)
-                if prob_cmps[ii][jj]>=random.random():
+                if prob_cmps[ii][jj]>= random.random():
 
-                    Ms, Vs = self.ts_solver.solve(np.vstack((G,np.array([ii,jj]))), num_iters=4, save = False)
-                    kl1 = self.kl_divergence_approx(Ms,Vs,Ms_curr,Vs_curr)
+                    if self.approx:
+                        Ms, Vs = self.ts_solver.solve_approx(np.array([[0,1]]), Ms_curr[[ii,jj]], Vs_curr[[ii,jj]])
+                        kl1 = self.kl_divergence_approx(Ms,Vs,Ms_curr[[ii,jj]],Vs_curr[[ii,jj]])
+                    else:
+                        Ms, Vs = self.ts_solver.solve(np.vstack((G,np.array([ii,jj]))), num_iters=4, save = False)
+                        kl1 = self.kl_divergence_approx(Ms,Vs,Ms_curr,Vs_curr)
 
-                    Ms, Vs  = self.ts_solver.solve(np.vstack((G,np.array([jj,ii]))), num_iters=4, save = False)
-                    kl2 = self.kl_divergence_approx(Ms,Vs,Ms_curr,Vs_curr)
+                    if self.approx:
+                        Ms, Vs = self.ts_solver.solve_approx(np.array([[1,0]]), Ms_curr[[ii,jj]], Vs_curr[[ii,jj]])
+                        kl2 = self.kl_divergence_approx(Ms,Vs,Ms_curr[[ii,jj]],Vs_curr[[ii,jj]])
+                    else:
+                        Ms, Vs  = self.ts_solver.solve(np.vstack((G,np.array([jj,ii]))), num_iters=4, save = False)
+                        kl2 = self.kl_divergence_approx(Ms,Vs,Ms_curr,Vs_curr)
 
+                    
                     # Compute expected information gain by weighting the kl divergence by the probability of one condition selected over another
                     kl_gain = prob[ii][jj]*kl1+(1-prob[ii][jj])*kl2
                     kl_divs[ii][jj] = kl_gain
@@ -159,14 +171,16 @@ class TrueSkillSolver():
     http://mlg.eng.cam.ac.uk/teaching/4f13/1920/message%20in%20TrueSkill.pdf
     '''
     
-    def __init__(self,N):
+    def __init__(self,N, approx=False):
+        self.approx = approx
         self.N = N
         self.Ms = np.zeros(shape=(N))
         self.Vs = 0.5*np.ones(shape = (N))
         self.Mgs = np.empty((0,2))
         self.Pgs = np.empty((0,2))
         self.pv = 0.5
-
+            
+        
     def add_cmps(self, numb_cmps=1):
         if numb_cmps>0:
             self.Pgs = np.vstack((self.Pgs, np.zeros((numb_cmps,2))))
@@ -184,6 +198,28 @@ class TrueSkillSolver():
         ps = self.psi(x)
         return ps*(ps + x)
 
+
+    def solve_approx(self, G, mv, pv):
+
+        # https://www.microsoft.com/en-us/research/project/trueskill-ranking-system/
+        N = np.shape(G)[0]
+        for ii in range(0,N):
+            c = np.sqrt(2+pv[G[ii,0]]+pv[G[ii,1]])
+
+            term = (mv[G[ii,0]]-mv[G[ii,1]])/c
+            #normpdf_term = scipy.stats.norm(0, 1).pdf(term)
+            #normcdf_term = scipy.stats.norm(0, 1).cdf(term)
+            #print(normcdf_term)
+            fact_1 =self.psi(term)
+            fact_2 =self.lamb(term)
+            mv[G[ii,0]] = mv[G[ii,0]]+pv[G[ii,0]]/c*fact_1
+            mv[G[ii,1]] = mv[G[ii,1]]-pv[G[ii,1]]/c*fact_1
+
+            pv[G[ii,0]] = pv[G[ii,0]]*(1-pv[G[ii,0]]*fact_2/c**2)
+            pv[G[ii,1]] = pv[G[ii,1]]*(1-pv[G[ii,1]]*fact_2/c**2)
+
+        return mv, pv
+    
     def solve(self, G, num_iters = 6, save = True):
 
         if np.shape(self.Mgs)[0]!=np.shape(G)[0]:

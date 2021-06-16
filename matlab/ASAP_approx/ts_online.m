@@ -4,7 +4,7 @@ function [mv, pv] = ts_online(G, mv, pv)
     
     for ii = 1:N
         beta = 1;
-        c = sqrt(2*beta+pv(G(1))+pv(G(2)));
+        c = sqrt(2*beta+pv(G(ii,1))+pv(G(ii,2)));
         term = (mv(G(ii,1))-mv(G(ii,2)))/c;
         normpdf_term = normpdf(term);
         normcdf_term = normcdf(term);

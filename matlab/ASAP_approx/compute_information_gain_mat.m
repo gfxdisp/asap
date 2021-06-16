@@ -31,13 +31,13 @@ function [kl_divs,out_data,arg] = compute_information_gain_mat(Nc,init_data)
             if init_data.prob_cmps(ii,jj)>rand()
 	    
 	        % Solve for the case that ii was selected over jj
-                out_data.G = [G; ii,jj];
+                %out_data.G = [G; ii,jj];
                 [msiijj,vsiijj]=ts_online([ii,jj],out_data.Ms,out_data.Vs);
 		
          		% Find kl between the current results from the experiment and those with ii over jj added
                 kl1=kl_divergence_approx([msiijj(ii),msiijj(jj)],[out_data.Ms(ii),out_data.Ms(jj)],[vsiijj(ii),vsiijj(jj)],[out_data.Vs(ii),out_data.Vs(jj)]);
        	 	% Solve for the case that jj was selected over ii
-                out_data.G = [G; jj,ii];
+                %out_data.G = [G; jj,ii];
                 [msjjii,vsjjii]=ts_online([jj,ii],out_data.Ms,out_data.Vs);                
                 kl2=kl_divergence_approx([msjjii(ii),msjjii(jj)],[out_data.Ms(ii),out_data.Ms(jj)],[vsjjii(ii),vsjjii(jj)],[out_data.Vs(ii),out_data.Vs(jj)]);
 
