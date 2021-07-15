@@ -14,6 +14,13 @@ class ASAP():
         self.selective_eig = selective_eig
 
 
+    def get_scores(self):
+        '''
+        Get current score estimation
+        '''
+        
+        return self.ts_solver.Ms, np.sqrt(self.ts_solver.Vs)
+        
     def unroll_mat(self,M):
         '''
         Function to convert matrix M with M[ii][jj] = (number of time ii was chosen over jj)

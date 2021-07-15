@@ -65,7 +65,7 @@ def true_skill(G: torch.Tensor, M: int, num_iters=4):
         # step1 compute marginal variance
         Ps = n2m(Pgs*count, 1/pv)
         Ms = n2m(Pgs*Mgs*count) / Ps
-    return dist.Normal(Ms, 1/Ps.sqrt())
+    return dist.Normal(Ms, 1/Ps.sqrt()), Ms, 1/Ps.sqrt()
 
 
 def prob_cmps(normal: dist.Normal):
@@ -121,7 +121,7 @@ def get_maximum(gain_mat):
     pair_to_compare = np.expand_dims(result[random.randint(0,np.shape(result)[0]-1),:],0)
     return pair_to_compare
 
-def ASAP(cmp_matrix: np.ndarray, mst_mode=True, cuda=False):
+def ASAP(cmp_matrix: np.ndarray, mst_mode=True, cuda=False, get_scores=False):
     '''
 
     Function to compute the next batch of comparisons to perform. 
@@ -150,7 +150,7 @@ def ASAP(cmp_matrix: np.ndarray, mst_mode=True, cuda=False):
         G0 = G0.cuda()
 
     # Compute the scores
-    normal0 = true_skill(G0, M)
+    normal0, Ms0, StD0 = true_skill(G0, M)
 
 
     # tensor to hold each possible pairwise outcome in the next comparison
@@ -162,7 +162,7 @@ def ASAP(cmp_matrix: np.ndarray, mst_mode=True, cuda=False):
     G[2,:,-1] = 1
 
     # Compute score distributions for each of the possible outcome combinations
-    normal = true_skill(G, M, num_iters=4)
+    normal,_,_ = true_skill(G, M, num_iters=4)
 
     
     # Compute expected information gain for all posible outcomes
@@ -178,4 +178,8 @@ def ASAP(cmp_matrix: np.ndarray, mst_mode=True, cuda=False):
         # minial spanning tree for batch mode
         pairs_to_compare = compute_minimum_spanning_tree(info_gain)
     
+    
+    if get_scores:
+        return pairs_to_compare, Ms0.cpu().detach().numpy(), StD0.cpu().detach().numpy()
+        
     return pairs_to_compare
