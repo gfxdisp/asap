@@ -1,4 +1,11 @@
 function [pairs_to_compare, Mean, Std] = run_asap(M,mode)
+% Run active sampling for pairwise comaprisons method to find the next pair
+% (or batch of pairs) to compare. 
+%
+% M - a square pairwise comparison matrix, where M(i,j)=k means that the
+% condition i was selected as better than condition j k-times. 
+% mode - 'mst' for the batch mode (minimum spanning tree) or 'seq' for the
+%        sequential mode.
 
     assert(size(M,1)==size(M,2),'Matrix M must be square.')
     assert(size(M,1)>2,'More than two conditions are required for active sampling.')
