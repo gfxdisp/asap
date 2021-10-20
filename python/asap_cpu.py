@@ -69,24 +69,23 @@ class ASAP():
         
         G = self.unroll_mat(M.copy())
         
-        # First N*2 comparisons are selected at random 
-        if M.sum()<N*2:
-            
-            index_array = np.arange(0,N)
-            random.shuffle(index_array)
-            if N%2==1:
-                index_array = np.append(index_array,index_array[0])
-
-            pairs_to_compare = np.reshape(index_array, (-1,2))
         
-        else:
-            # Returns an information gain matrix and the next pair of comparisons with the largest information gain
-            inf_mat, pairs_to_compare = self.compute_information_gain_mat(N,G)
-
-            # If we are interested in the set of (N-1) pairs to compare instead of a single comparison, we extract
-            # this set with a minimum spanning tree of the inverse of the information gain matrix
-            if mst_mode:
-                pairs_to_compare = self.compute_minimum_spanning_tree(inf_mat)
+        # Returns an information gain matrix and the next pair of comparisons with the largest information gain
+        inf_mat, pairs_to_compare = self.compute_information_gain_mat(N,G)
+        # If we are interested in the set of (N-1) pairs to compare instead of a single comparison, we extract
+        # this set with a minimum spanning tree of the inverse of the information gain matrix
+        if mst_mode:
+            
+            # In the first iteration populate information matrix at random
+            if M.sum()<(N-1):
+                
+                inf_mat = np.tril(np.random.rand(N,N))
+                np.fill_diagonal(inf_mat,0)
+            
+                
+            pairs_to_compare = self.compute_minimum_spanning_tree(inf_mat)
+        
+        
         return pairs_to_compare
 
     
