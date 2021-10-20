@@ -53,8 +53,11 @@ class ASAP():
         T=nx.minimum_spanning_tree(GrMST)
 
         pairs_to_compare = np.asarray(T.edges())
+        
         edges=sorted(T.edges(data=True), key=lambda t: t[2].get('weight', 1))
         pairs_to_compare = np.array([t[0:2] for t in edges ])
+        
+        
         return pairs_to_compare
 
     def run_asap(self, M, mst_mode=True):
@@ -66,14 +69,24 @@ class ASAP():
         
         G = self.unroll_mat(M.copy())
         
+        # First N*2 comparisons are selected at random 
+        if M.sum()<N*2:
+            
+            index_array = np.arange(0,N)
+            random.shuffle(index_array)
+            if N%2==1:
+                index_array = np.append(index_array,index_array[0])
 
-        # Returns an information gain matrix and the next pair of comparisons with the largest information gain
-        inf_mat, pairs_to_compare = self.compute_information_gain_mat(N,G)
+            pairs_to_compare = np.reshape(index_array, (-1,2))
         
-        # If we are interested in the set of (N-1) pairs to compare instead of a single comparison, we extract
-        # this set with a minimum spanning tree of the inverse of the information gain matrix
-        if mst_mode:
-            pairs_to_compare = self.compute_minimum_spanning_tree(inf_mat)
+        else:
+            # Returns an information gain matrix and the next pair of comparisons with the largest information gain
+            inf_mat, pairs_to_compare = self.compute_information_gain_mat(N,G)
+
+            # If we are interested in the set of (N-1) pairs to compare instead of a single comparison, we extract
+            # this set with a minimum spanning tree of the inverse of the information gain matrix
+            if mst_mode:
+                pairs_to_compare = self.compute_minimum_spanning_tree(inf_mat)
         return pairs_to_compare
 
     
@@ -94,13 +107,14 @@ class ASAP():
         Nd = scipy.stats.norm(0, 1)
         prob = Nd.cdf(diff_means/np.sqrt(vars_sum))
         np.fill_diagonal(prob,0)
-        prob = np.minimum(prob, 1-prob)
-        prob = np.tril(prob)
-        prob_cmp = prob.copy()
-        prob_cmp = np.ones(np.shape(prob_cmp))
+        
         if self.selective_eig:
+            prob_cmp = prob.copy()
+            prob_cmp = np.minimum(prob_cmp, 1-prob_cmp)
+            prob_cmp = np.tril(prob_cmp)
             prob_cmp = np.divide(prob_cmp.T,np.amax(prob_cmp, 1), out=np.zeros_like(prob_cmp.T), where=np.amax(prob_cmp, 1)!=0).T
-
+        else:
+            prob_cmp = np.ones(np.shape(prob))
             
         return prob, prob_cmp
 
@@ -132,6 +146,7 @@ class ASAP():
         # expected information gain evaluations
         prob, prob_cmps = self.compute_prob_cmps()
         # Iterate over all possible pairs of conditions
+
         for ii in range(1,N):
             for jj in range(0,ii):
                 # only calculate the the expected information gain for the pairs that are close in the scale (selective evaluations)
@@ -150,11 +165,9 @@ class ASAP():
                     else:
                         Ms, Vs  = self.ts_solver.solve(np.vstack((G,np.array([jj,ii]))), num_iters=4, save = False)
                         kl2 = self.kl_divergence_approx(Ms,Vs,Ms_curr,Vs_curr)
-
                     
                     # Compute expected information gain by weighting the kl divergence by the probability of one condition selected over another
-                    kl_gain = prob[ii][jj]*kl1+(1-prob[ii][jj])*kl2
-                    kl_divs[ii][jj] = kl_gain
+                    kl_divs[ii][jj] = prob[jj][ii]*kl1+prob[ii][jj]*kl2
                 else:
                     kl_divs[ii][jj] = -1
 
@@ -162,13 +175,14 @@ class ASAP():
 
         return kl_divs, pair_to_compare
 
+    
+    
     def kl_divergence_approx(self,mean_1, var_1, mean_2, var_2):
         '''
         Aproximation of the multivariate normal KL divergence: 
         https://stats.stackexchange.com/questions/60680/kl-divergence-between-two-multivariate-gaussians
         '''
-        total = np.sum(np.log(var_2)) - np.sum(np.log(var_1))+sum(var_1/var_2)+np.dot(1/var_2, (mean_1-mean_2)**2)
-
+        total = np.sum(np.log(var_2)) - np.sum(np.log(var_1))+sum(var_1/var_2)+np.dot(1/var_2, (mean_1-mean_2)**2)#
         return total
 
 
