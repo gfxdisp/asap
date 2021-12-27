@@ -32,15 +32,19 @@ function [kl_divs,out_data,arg] = compute_information_gain_mat(Nc,init_data)
 	    
 	        % Solve for the case that ii was selected over jj
                 out_data.G = [G; ii,jj];
-                [out_data_iijj]=ts_solve(out_data);
+                [out_data_iijj]=ts_solve_fast(out_data);
 		
 		% Find kl between the current results from the experiment and those with ii over jj added
                 kl1=kl_divergence_approx(out_data_iijj.Ms,out_data.Ms,out_data_iijj.Vs,out_data.Vs);
 
        	 	% Solve for the case that jj was selected over ii
                 out_data.G = [G; jj,ii];
-                [out_data_jjii]=ts_solve(out_data);
+%                [out_data_jjii_test]=ts_solve(out_data);
+                [out_data_jjii]=ts_solve_fast(out_data);
+%                assert(all(abs(out_data_jjii.Ms - out_data_jjii_test.Ms)<1e-4))
+
                 kl2=kl_divergence_approx(out_data_jjii.Ms,out_data.Ms,out_data_jjii.Vs,out_data.Vs);
+                
 
                 % Expected information gain
                 kl_gain=pij*kl1+(1-pij)*kl2;
