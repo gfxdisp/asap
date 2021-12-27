@@ -14,8 +14,11 @@ condition_table = create_factorial_table( scene, method, param );
 % cross-scene comparisons. 
 sch = PwcmpASAPScheduler( 'test_results.csv', 'test_obs', condition_table, { 'scene' } );
 
+% To allow for cross-scene comparisons, remove parameter { 'scene' }
+%sch = PwcmpASAPScheduler( 'test_results.csv', 'test_obs', condition_table );
+
 % The code below simulates an experiment
-N_batch = sch.get_pair_left(); % Get the number of conditions left in the current batch
+[sch, N_batch] = sch.get_pair_left(); % Get the number of conditions left in the current batch
 
 for kk=1:N_batch % for each pairwise comparison in the batch
     
