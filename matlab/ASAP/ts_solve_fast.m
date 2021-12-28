@@ -13,6 +13,9 @@ function [init_data] = ts_solve_fast(init_data)
 % Ms(p) = mean of skill for player p
 % Ps(p) = precision of skill for player p
 
+% RKM 2021/12: Improved vectorization to make the computations with large
+% number of conditions much faster
+
 Ng = size(init_data.G,1);            % number of games
 Nc = init_data.Nc;
 
