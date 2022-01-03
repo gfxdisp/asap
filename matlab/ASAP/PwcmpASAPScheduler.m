@@ -42,7 +42,10 @@ end
         % block_columns - a cell array with the names of the columns that define separate
         %            blocks of pairwise comparison measurememts. Each block
         %            is measured independently, i.e. no comparisons are
-        %            made between the conditions in each block. 
+        %            made between the conditions in each block. If no
+        %            blocks should be created (all conditions should be
+        %            compared with each other), pass an empty cell {} or skip this
+        %            parameter. 
         %            Example: { 'scene' } -
         %            the comparisons will be made only between the
         %            conditions for which the 'scene' attribute is the same.         
@@ -52,21 +55,37 @@ end
                 addpath( fullfile( pwd, '..', '..', 'asap', 'matlab', 'ASAP' ) );
             end
             
+            if ~exist( 'block_columns', 'var' )
+                block_columns = {};
+            end
+            
             sch.observer = observer;
             sch.result_file = result_file;
             sch.condition_table = condition_table;
             sch.block_columns = block_columns;
-                        
-            block_table = unique( condition_table(:,block_columns), 'rows' );
             
-            sch.N_blocks = height(block_table);
-            sch.cmp_M = cell( height(block_table), 1 );
-            for kk=1:height(block_table)
-                ss = columns_equal(condition_table, block_columns, block_table(kk,:) );
-                Dss = condition_table( ss, : );
+            if isempty( block_columns )
+                block_table = [];
+                sch.N_blocks = 1;
+            else
+                block_table = unique( condition_table(:,block_columns), 'rows' );
+                sch.N_blocks = height(block_table);
+            end
+            
+            % Populate cond_index so that we can quickly find a condition
+            % based on its index value
+            sch.cmp_M = cell( sch.N_blocks, 1 );
+            for kk=1:sch.N_blocks
+                if isempty( block_columns)
+                    ss = true(height(condition_table),1);
+                    Dss = condition_table;
+                else
+                    ss = columns_equal(condition_table, block_columns, block_table(kk,:) );
+                    Dss = condition_table( ss, : );
+                end
                 sch.cmp_M{kk} = zeros(height(Dss));
                 if isempty( sch.cond_index )
-                    sch.cond_index = nan(height(block_table),height(Dss));
+                    sch.cond_index = nan(sch.N_blocks,height(Dss));
                 end
                 ss_ind = find(ss);
                 for ii=1:height(Dss)
@@ -88,25 +107,41 @@ end
                 fprintf( fh, ', is_A_selected\n' );
                 fclose( fh );
             else
-                % Load existing results into comparison tables
-                
+                % Load existing results into comparison tables                
                 R = readtable( sch.result_file );
                 all_columns = condition_table.Properties.VariableNames;
                 non_block_columns = all_columns(~ismember(all_columns,block_columns));
                 non_block_columns_A = strcat( non_block_columns, '_A' );
                 non_block_columns_B = strcat( non_block_columns, '_B' );
                 for kk=1:sch.N_blocks % for each block
-                    Rss = R(columns_equal(R, block_columns, block_table(kk,:) ), : );
-                    Dss = condition_table( columns_equal(condition_table, block_columns, block_table(kk,:) ), : );
+                    if isempty( block_columns )
+                        Rss = R;
+                        Dss = condition_table;
+                    else
+                        Rss = R(columns_equal(R, block_columns, block_table(kk,:) ), : );
+                        Dss = condition_table( columns_equal(condition_table, block_columns, block_table(kk,:) ), : );
+                    end
                     
+                    N_missing = 0;
                     for rr=1:height(Rss)
                         ind_A = find( columns_equal( Dss, non_block_columns, Rss(rr,non_block_columns_A) ) );
                         ind_B = find( columns_equal( Dss, non_block_columns, Rss(rr,non_block_columns_B) ) );
+                        if isempty( ind_A ) || isempty( ind_B )
+                            N_missing = N_missing + 1;                            
+                            if N_missing<2
+                                warning( 'Results file contains a condition that is missing in the condition_table' );
+                                display( Rss(rr,:) );
+                            end
+                            continue;
+                        end
                         if Rss.is_A_selected(rr)
                             sch.cmp_M{kk}(ind_A,ind_B) = sch.cmp_M{kk}(ind_A,ind_B)+1;
                         else
                             sch.cmp_M{kk}(ind_B,ind_A) = sch.cmp_M{kk}(ind_B,ind_A)+1;
                         end
+                    end
+                    if N_missing>0
+                        warning( 'Results file contains %d answers that do not match any of the conditions in the condition_table', N_missing );
                     end
                 end                
                 
@@ -115,6 +150,7 @@ end
             
         end
         
+        % Run ASAP to get the next batch of pairs
         function sch = init_pair_list( sch )
             if isempty( sch.pair_list )
                 for kk=1:sch.N_blocks
@@ -128,7 +164,7 @@ end
 
         % Get the number of pairwise comparison left in the current
         % batch
-        function N = get_pair_left( sch )
+        function [sch, N] = get_pair_left( sch )
             sch = sch.init_pair_list();            
             N = size(sch.pair_list,1) - sch.pair_index;
         end
