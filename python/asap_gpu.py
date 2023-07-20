@@ -94,7 +94,7 @@ def compute_minimum_spanning_tree(inf_mat):
     inf_mat[inf_mat<=0.0] = np.inf
     inf_mat = 1/inf_mat
     
-    GrMST=nx.from_numpy_matrix(inf_mat)
+    GrMST=nx.from_numpy_array(inf_mat)
     T=nx.minimum_spanning_tree(GrMST)
 
     pairs_to_compare = np.asarray(T.edges())
