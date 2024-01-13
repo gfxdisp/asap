@@ -1,4 +1,4 @@
-function [pairs_to_compare, Mean, Std] = run_asap(M,mode)
+function [pairs_to_compare, Mean, Std] = run_asap(M, M_inf,mode)
 % Run active sampling for pairwise comaprisons method to find the next pair
 % (or batch of pairs) to compare. 
 %
@@ -46,7 +46,7 @@ function [pairs_to_compare, Mean, Std] = run_asap(M,mode)
     % Compute the information gain matrix and return a single pair maximizing information gain
     [inf_mat,init_data,pairs_to_compare]=compute_information_gain_mat(N,init_data);
     if strcmp(mode,'mst')
-        pairs_to_compare = compute_minimum_spanning_tree(inf_mat);
+        pairs_to_compare = compute_minimum_spanning_tree(inf_mat, M_inf);
     end
     
     Mean = init_data.Ms;
