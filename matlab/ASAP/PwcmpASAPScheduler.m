@@ -15,8 +15,10 @@ properties
     observer;
     condition_table;
     block_columns;
+    block_same_conditions;
     
     cmp_M = []; % 
+    cmp_inf = []; %
     N_blocks;
     
     cond_index = []; % [block, cond] matrix with the indices of each (block,cond) pair in condition_table    
@@ -49,7 +51,7 @@ end
         %            Example: { 'scene' } -
         %            the comparisons will be made only between the
         %            conditions for which the 'scene' attribute is the same.         
-        function sch = PwcmpASAPScheduler( result_file, observer, condition_table, block_columns )
+        function sch = PwcmpASAPScheduler( result_file, observer, condition_table, block_columns, block_same_conditions )
         
             if ~exist( 'run_asap', 'var' )
                 addpath( fullfile( pwd, '..', '..', 'asap', 'matlab', 'ASAP' ) );
@@ -58,11 +60,16 @@ end
             if ~exist( 'block_columns', 'var' )
                 block_columns = {};
             end
+
+            if ~exist( 'block_same_conditions', 'var' )
+                block_same_conditions = {};
+            end
             
             sch.observer = observer;
             sch.result_file = result_file;
             sch.condition_table = condition_table;
             sch.block_columns = block_columns;
+            sch.block_same_conditions = block_same_conditions; 
             
             if isempty( block_columns )
                 block_table = [];
@@ -75,6 +82,8 @@ end
             % Populate cond_index so that we can quickly find a condition
             % based on its index value
             sch.cmp_M = cell( sch.N_blocks, 1 );
+            sch.cmp_inf = cell( sch.N_blocks, 1); 
+
             for kk=1:sch.N_blocks
                 if isempty( block_columns)
                     ss = true(height(condition_table),1);
@@ -84,6 +93,22 @@ end
                     Dss = condition_table( ss, : );
                 end
                 sch.cmp_M{kk} = zeros(height(Dss));
+                sch.cmp_inf{kk} = ones(height(Dss));
+
+                % Define the edges that you do not want to compare between 
+
+                if ~isempty(sch.block_same_conditions)
+                    for bb = 1:length(sch.block_same_conditions)
+                        for ii = 1:height(Dss)
+                            for jj = 1:height(Dss)
+                                if strcmp(Dss.(sch.block_same_conditions{bb}){ii}, Dss.(sch.block_same_conditions{bb}){jj})
+                                    sch.cmp_inf{kk}(ii, jj) = 0 ; 
+                                end 
+                            end 
+                        end
+                    end 
+                end 
+
                 if isempty( sch.cond_index )
                     sch.cond_index = nan(sch.N_blocks,height(Dss));
                 end
@@ -154,7 +179,7 @@ end
         function sch = init_pair_list( sch )
             if isempty( sch.pair_list )
                 for kk=1:sch.N_blocks
-                    pairs = run_asap( sch.cmp_M{kk}, 'mst');                    
+                    pairs = run_asap( sch.cmp_M{kk}, sch.cmp_inf{kk}, 'mst');                    
                     pl_add = [ones(size(pairs,1),1)*kk pairs];                    
                     sch.pair_list = cat( 1, sch.pair_list, pl_add );                                        
                 end            
