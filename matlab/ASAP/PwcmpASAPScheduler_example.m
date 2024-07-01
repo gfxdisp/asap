@@ -12,7 +12,7 @@ condition_table = create_factorial_table( scene, method, param );
 % We want to compare relative quality within each scene: comapre all
 % methods at all parameter values with each other, but without any
 % cross-scene comparisons. 
-sch = PwcmpASAPScheduler( 'test_results.csv', 'test_obs', condition_table, { 'scene' } );
+sch = PwcmpASAPScheduler( 'test_results.csv', 'test_obs', condition_table, { 'scene' }, {'method'} );
 
 % To allow for cross-scene comparisons, remove parameter { 'scene' }
 %sch = PwcmpASAPScheduler( 'test_results.csv', 'test_obs', condition_table );
