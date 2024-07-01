@@ -130,8 +130,3 @@ Crowd-BT: X. Chen, P. N. Bennett, K. Collins-Thompson, and E. Horvitz, 2013. “
 
 Hybrid-MST: J.  Li,  R.  Mantiuk,  J.  Wang,  S.  Ling,  and  P.  Le  Callet, 2018.  “Hybrid-mst: A hybrid active sampling strategy for pairwise preference aggregation,” NIPS, 31st Conference on Neural Information Processing Systems. [LINK](https://github.com/jingnantes/hybrid-mst)
 
-
-
-## License
-
-MIT
